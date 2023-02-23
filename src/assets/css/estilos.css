@@ -5,3 +5,7 @@
 .nowrap {
   flex-wrap: wrap;
 }
+
+.imgLogo {
+  width: 85px;
+}

@@ -14,9 +14,13 @@ function App() {
       <nav className="navbar navbar-expand-sm nowrap bg-body-tertiary col-12">
         <BrowserRouter>
           <div className="container-fluid">
-            <a className="navbar-brand" href="#">
-              Navbar
-            </a>
+            <NavLink className="navbar-brand" to="/">
+              <img
+                src={require(`./assets/img/logo.png`)}
+                alt="Logo"
+                className="imgLogo d-inline-block align-top"
+              />
+            </NavLink>
 
             <button
               className="navbar-toggler"
@@ -40,8 +44,13 @@ function App() {
                     Página principal
                   </NavLink>
                 </li>
+
+                <li className="nav-item">
+                  <NavLink className="nav-link" to="/carrito">
+                    Carrito
+                  </NavLink>
+                </li>
               </ul>
-              <NavLink to="/carrito">Carrito</NavLink>
             </div>
           </div>
 
