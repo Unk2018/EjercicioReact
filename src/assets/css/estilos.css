@@ -9,3 +9,21 @@
 .imgLogo {
   width: 85px;
 }
+
+.textCarrito{
+  display: none;
+}
+
+.svgCarrito{
+  display: block;
+}
+
+@media only screen and (max-width: 575px){
+  .textCarrito{
+    display: block;
+  }
+  
+  .svgCarrito{
+    display: none;
+  }
+}
