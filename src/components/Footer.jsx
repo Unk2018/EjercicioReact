@@ -1,10 +1,10 @@
 import React from "react";
-import "../assets/css/bootstrap.min.css";
+import "../../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "../assets/css/estilos.css";
 
 function Footer() {
   return (
-    <footer className="mt-5 pt-5 pb-3 bg-dark-subtle">
+    <footer className="pt-5 pb-5 bg-dark-subtle">
       <div className="container">
         <div className="row row-cols-4 text center">
           <div className="col-12 col-sm-12 col-md-3 col-lg-3">

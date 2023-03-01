@@ -1,30 +1,14 @@
-import { useState } from "react";
 import "./App.css";
-import "./assets/css/bootstrap.min.css";
+import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
+import "../node_modules/bootstrap/dist/js/bootstrap.bundle.js";
 import "./assets/css/estilos.css";
 import ListaProductos from "./components/ListaProductos";
 import ListaCarrito from "./components/ListaCarrito";
 import Footer from "./components/Footer";
 import { BrowserRouter, Route, Routes, NavLink } from "react-router-dom";
+import Inicio from "./components/Inicio";
 
 function App() {
-  const [isNavbarExpanded, setNavbarExpand] = useState(false);
-
-  const navBarExpand = () => {
-    var navbar = document.getElementById("navbarSupportedContent");
-
-    if (
-      window.innerWidth < 576 &&
-      { isNavbarExpanded }.isNavbarExpanded === false
-    ) {
-      setNavbarExpand(true);
-      navbar.style.display = "block";
-    } else {
-      setNavbarExpand(false);
-      navbar.style.display = "none";
-    }
-  };
-
   return (
     <div className="App">
       <nav className="navbar navbar-expand-sm nowrap col-12 p-0">
@@ -46,7 +30,6 @@ function App() {
               aria-controls="navbarSupportedContent"
               aria-expanded="false"
               aria-label="Toggle navigation"
-              onClick={navBarExpand}
             >
               <span className="navbar-toggler-icon"></span>
             </button>
@@ -57,23 +40,20 @@ function App() {
             >
               <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                 <li className="nav-item">
-                  <NavLink
-                    className="nav-link text-white"
-                    to="/"
-                    onClick={navBarExpand}
-                  >
+                  <NavLink className="nav-link text-white" to="/">
                     Página principal
+                  </NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink className="nav-link text-white" to="/productos">
+                    Productos
                   </NavLink>
                 </li>
               </ul>
 
               <ul className="navbar-nav me-3 mb-2 mb-lg-0 d-flex">
                 <li className="nav-item">
-                  <NavLink
-                    className="nav-link text-white"
-                    to="/carrito"
-                    onClick={navBarExpand}
-                  >
+                  <NavLink className="nav-link text-white" to="/carrito">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="16"
@@ -92,14 +72,15 @@ function App() {
           </div>
 
           <Routes>
-            <Route path="/" element={<ListaProductos />}></Route>
+            <Route path="/" element={<Inicio />}></Route>
+            <Route path="/productos" element={<ListaProductos />}></Route>
             <Route path="/carrito" element={<ListaCarrito />}></Route>
             {/* Sale cuando hay errores (no encuentra elemento en esa ruta) */}
             <Route
               path="*"
               element={
-                <div className="mt-5">
-                  <h1>Error 404</h1>
+                <div className="w-100 p-0 m-0">
+                  <img src={require(`./assets/img/error.jpg`)} alt="..." className="w-100"/>
                 </div>
               }
             ></Route>

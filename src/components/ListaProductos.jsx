@@ -1,5 +1,5 @@
 import React from "react";
-import "../assets/css/bootstrap.min.css";
+import "../../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import Producto from "./Producto";
 import { useEffect } from "react";
 

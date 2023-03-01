@@ -1,11 +1,12 @@
 import React from "react";
-import "../assets/css/bootstrap.min.css";
+import "../../node_modules/bootstrap/dist/css/bootstrap.min.css";
+import "../../node_modules/bootstrap/dist/js/bootstrap.bundle.js";
 import { useState, useEffect } from "react";
+import FormPay from "./FormPay";
 
 function ListaCarrito() {
   var [db, setDb] = useState(0);
   var openRequest = null;
-  var [total, setTotal] = useState(0);
 
   const iniciarBD = (db) => {
     let store;
@@ -127,7 +128,54 @@ function ListaCarrito() {
         } else {
           contenido += "<tr>";
 
-          setTotal(costeTotal.toFixed(2));
+          contenido += "<th></th>";
+          contenido += "<td></td>";
+          contenido += "<th>Total:</th>";
+          contenido += "<th>" + costeTotal.toFixed(2) + " €</th>";
+          contenido += "</tr>";
+
+          listado.innerHTML = contenido;
+          console.log("¡No hay más registros disponibles!");
+        }
+      };
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const consultarDB = () => {
+    // Abre usuarios y guarda sus datos
+    var listado = document.getElementById("listaCarrito");
+    var objectStore = db.transaction("carrito").objectStore("carrito");
+    var cursor;
+    var contenido = "";
+    var costeTotal = 0;
+    var contador = 1;
+
+    try {
+      // Abre los datos obtenidos. Cuando lo hace correctamente, recorrerá los datos
+      objectStore.openCursor().onsuccess = function (event) {
+        cursor = event.target.result;
+
+        // Si hay datos, entonces añade
+        if (cursor) {
+          contenido += "<tr>";
+
+          contenido += "<th scope='row'>" + contador + "</th>";
+          contenido += "<td>" + cursor.value.nombre + "</td>";
+          contenido += "<td>" + cursor.value.cantidad + "</td>";
+          contenido += "<td>" + cursor.value.coste + " €</td>";
+
+          contenido += "</tr>";
+
+          costeTotal += cursor.value.cantidad * cursor.value.coste;
+          contador++;
+
+          cursor.continue();
+
+          // Si ya no hay, entonces se sale y mete a la tabla todos los datos existentes
+        } else {
+          contenido += "<tr>";
 
           contenido += "<th></th>";
           contenido += "<td></td>";
@@ -146,7 +194,9 @@ function ListaCarrito() {
 
   const clearCarrito = () => {
     // Abre usuarios y guarda sus datos
-    var objectStore = db.transaction("carrito", "readwrite").objectStore("carrito");
+    var objectStore = db
+      .transaction("carrito", "readwrite")
+      .objectStore("carrito");
     var objectClear = null;
 
     try {
@@ -154,6 +204,7 @@ function ListaCarrito() {
 
       objectClear.onsuccess = () => {
         console.log("Se ha limpiado carrito");
+        consultarDB();
       };
     } catch (error) {
       console.log(error);
@@ -196,20 +247,55 @@ function ListaCarrito() {
 
       <button
         className="btn btn-success me-1 col-12 col-lg-3 col-md-4 col-sm-5 mt-2 p-2"
-        onClick={clearCarrito}
+        data-bs-toggle="modal"
+        data-bs-target="#exampleModal"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="16"
           height="16"
           fill="currentColor"
-          className="bi bi-paypal mb-1 me-2"
+          className="bi bi-stripe mb-1 me-2"
           viewBox="0 0 16 16"
         >
-          <path d="M14.06 3.713c.12-1.071-.093-1.832-.702-2.526C12.628.356 11.312 0 9.626 0H4.734a.7.7 0 0 0-.691.59L2.005 13.509a.42.42 0 0 0 .415.486h2.756l-.202 1.28a.628.628 0 0 0 .62.726H8.14c.429 0 .793-.31.862-.731l.025-.13.48-3.043.03-.164.001-.007a.351.351 0 0 1 .348-.297h.38c1.266 0 2.425-.256 3.345-.91.379-.27.712-.603.993-1.005a4.942 4.942 0 0 0 .88-2.195c.242-1.246.13-2.356-.57-3.154a2.687 2.687 0 0 0-.76-.59l-.094-.061ZM6.543 8.82a.695.695 0 0 1 .321-.079H8.3c2.82 0 5.027-1.144 5.672-4.456l.003-.016c.217.124.4.27.548.438.546.623.679 1.535.45 2.71-.272 1.397-.866 2.307-1.663 2.874-.802.57-1.842.815-3.043.815h-.38a.873.873 0 0 0-.863.734l-.03.164-.48 3.043-.024.13-.001.004a.352.352 0 0 1-.348.296H5.595a.106.106 0 0 1-.105-.123l.208-1.32.845-5.214Z" />
+          <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2Zm6.226 5.385c-.584 0-.937.164-.937.593 0 .468.607.674 1.36.93 1.228.415 2.844.963 2.851 2.993C11.5 11.868 9.924 13 7.63 13a7.662 7.662 0 0 1-3.009-.626V9.758c.926.506 2.095.88 3.01.88.617 0 1.058-.165 1.058-.671 0-.518-.658-.755-1.453-1.041C6.026 8.49 4.5 7.94 4.5 6.11 4.5 4.165 5.988 3 8.226 3a7.29 7.29 0 0 1 2.734.505v2.583c-.838-.45-1.896-.703-2.734-.703Z" />
         </svg>
-        Comprar por Paypal
+        Comprar por Stripe
       </button>
+
+      <div
+        className="modal fade"
+        id="exampleModal"
+        tabIndex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h1 className="modal-title fs-5" id="exampleModalLabel">
+                Stripe
+              </h1>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+
+            <div className="modal-body">
+              <div className="container p-4">
+                <div className="row">
+                  <div className="col-12">
+                    <FormPay db={db} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
