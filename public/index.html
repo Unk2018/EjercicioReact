@@ -135,7 +135,6 @@
       var cursor;
       var contenido = "";
       var costeTotal = 0;
-      var contador = 1;
 
       try {
         // Abre los datos obtenidos. Cuando lo hace correctamente, recorrerá los datos
@@ -146,7 +145,32 @@
           if (cursor) {
             contenido += "<tr>";
 
-            contenido += "<th scope='row'>" + contador + "</th>";
+            // Introduce imagen dependiendo del producto (url de la imagen)
+            if (cursor.value.image === "../assets/img/jamon.jpg") {
+              contenido +=
+                "<th scope='row'><img class='w-75' src='img/jamon.jpg' /></th>";
+
+            } else if (cursor.value.image === "../assets/img/pechuga.jpg") {
+              contenido +=
+                "<th scope='row'><img class='w-75' src='img/pechuga.jpg'> <img/></th>";
+
+            } else if (cursor.value.image === "../assets/img/atun.jpg") {
+              contenido +=
+                "<th scope='row'><img class='w-75' src='img/atun.jpg'/></th>";
+
+            } else if (cursor.value.image === "../assets/img/uvas.jpg") {
+              contenido +=
+                "<th scope='row'><img class='w-75' src='img/uvas.jpg'/></th>";
+
+            } else if (cursor.value.image === "../assets/img/coliflor.jpg") {
+              contenido +=
+                "<th scope='row'><img class='w-75' src='img/coliflor.jpg'/></th>";
+
+            } else if (cursor.value.image === "../assets/img/zanahorias.jpg") {
+              contenido +=
+                "<th scope='row'><img class='w-75' src='img/zanahorias.jpg'/></th>";
+            }
+
             contenido += "<td>" + cursor.value.nombre + "</td>";
             contenido += "<td>" + cursor.value.cantidad + "</td>";
             contenido += "<td>" + cursor.value.coste + " €</td>";
@@ -184,7 +208,6 @@
             contenido += "</tr>";
 
             costeTotal += cursor.value.cantidad * cursor.value.coste;
-            contador++;
 
             cursor.continue();
 
@@ -257,7 +280,7 @@
                 data = request.result;
 
                 // Define los nuevos valores del dato seleccionado
-                data.image = cursor.value.imagen;
+                data.image = cursor.value.image;
                 data.nombre = cursor.value.nombre;
                 data.cantidad = parseInt(cursor.value.cantidad) + 1;
                 data.coste = cursor.value.coste;
@@ -330,7 +353,7 @@
                   data = request.result;
 
                   // Define los nuevos valores del dato seleccionado
-                  data.image = cursor.value.imagen;
+                  data.image = cursor.value.image;
                   data.nombre = cursor.value.nombre;
                   data.cantidad = parseInt(cursor.value.cantidad) - 1;
                   data.coste = cursor.value.coste;

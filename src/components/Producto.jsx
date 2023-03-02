@@ -3,7 +3,7 @@ import "../../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "../assets/css/estilos.css";
 import { useState, useEffect } from "react";
 
-function Producto({ nombre, precio, img, descripcion }) {
+function Producto({ nombre, precio, img, imgDB, descripcion }) {
   // Los enlaza automáticamente aunque solo en pares. Deja de cojerlo bien si hay 3, pero enlaza el 3 con
   // el 4 si hay
   const [cantidad, SetCantidad] = useState(1);
@@ -115,7 +115,7 @@ function Producto({ nombre, precio, img, descripcion }) {
     try {
       // Crear usuario
       producto = {
-        image: { img }.img,
+        image: { imgDB }.imgDB,
         nombre: { nombre }.nombre,
         cantidad: { cantidad }.cantidad,
         coste: { precio }.precio,
@@ -194,7 +194,7 @@ function Producto({ nombre, precio, img, descripcion }) {
         // Coge los antiguos valores del dato correspondiente
         data = request.result;
         // Define los nuevos valores del dato seleccionado
-        data.image = { img }.img;
+        data.image = { imgDB }.imgDB;
         data.nombre = { nombre }.nombre;
         data.cantidad = parseFloat(cantidad) + parseFloat(cantidadActual);
         data.coste = { precio }.precio;

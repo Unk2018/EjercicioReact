@@ -153,7 +153,7 @@ function Inicio() {
           <h4 className="fs-5">¡Envíos rápidos y seguros!</h4>
           <p>
             Enviamos productos frescos y refrigerados rápidamente, ¡por lo que
-            no te preocupes de que te llegue el producto en mal estado!.
+            no te preocupes de que te llegue el producto en mal estado!
           </p>
         </div>
       </div>

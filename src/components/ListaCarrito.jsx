@@ -102,7 +102,6 @@ function ListaCarrito() {
     var cursor;
     var contenido = "";
     var costeTotal = 0;
-    var contador = 1;
 
     try {
       // Abre los datos obtenidos. Cuando lo hace correctamente, recorrerá los datos
@@ -113,26 +112,67 @@ function ListaCarrito() {
         if (cursor) {
           contenido += "<tr>";
 
-          contenido += "<th scope='row'>" + contador + "</th>";
+          // Introduce imagen dependiendo del producto (url de la imagen)
+          if (cursor.value.image === "../assets/img/jamon.jpg") {
+            contenido +=
+              "<th scope='row'><img class='w-75' src=" +
+              require(`../assets/img/jamon.jpg`) +
+              "/></th>";
+          } else if (cursor.value.image === "../assets/img/pechuga.jpg") {
+            contenido +=
+              "<th scope='row'><img class='w-75' src=" +
+              require(`../assets/img/pechuga.jpg`) +
+              "/></th>";
+          } else if (cursor.value.image === "../assets/img/atun.jpg") {
+            contenido +=
+              "<th scope='row'><img class='w-75' src=" +
+              require(`../assets/img/atun.jpg`) +
+              "/></th>";
+          } else if (cursor.value.image === "../assets/img/uvas.jpg") {
+            contenido +=
+              "<th scope='row'><img class='w-75' src=" +
+              require(`../assets/img/uvas.jpg`) +
+              "/></th>";
+          } else if (cursor.value.image === "../assets/img/coliflor.jpg") {
+            contenido +=
+              "<th scope='row'><img class='w-75' src=" +
+              require(`../assets/img/coliflor.jpg`) +
+              "/></th>";
+          } else if (cursor.value.image === "../assets/img/zanahorias.jpg") {
+            contenido +=
+              "<th scope='row'><img class='w-75' src=" +
+              require(`../assets/img/zanahorias.jpg`) +
+              "/></th>";
+          }
+
           contenido += "<td>" + cursor.value.nombre + "</td>";
           contenido += "<td>" + cursor.value.cantidad + "</td>";
           contenido += "<td>" + cursor.value.coste + " €</td>";
 
           contenido +=
             "<td>" +
-            "<button class='btn btn-outline-primary' onclick='lessCant("+cursor.value.id+","+cursor.value.cantidad+","+cursor.value.coste+")'>" +
-            "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-arrow-left' viewBox='0 0 16 16' >"+
-            "<path d='M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z' />"+
-            "</svg>"+
+            "<button class='btn btn-outline-primary' onclick='lessCant(" +
+            cursor.value.id +
+            "," +
+            cursor.value.cantidad +
+            "," +
+            cursor.value.coste +
+            ")'>" +
+            "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-arrow-left' viewBox='0 0 16 16' >" +
+            "<path d='M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z' />" +
+            "</svg>" +
             "</button>" +
-
-            "<button class='btn btn-outline-primary' onclick='moreCant("+cursor.value.id+","+cursor.value.cantidad+","+cursor.value.coste+")'>" +
-            
-            "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-arrow-right' viewBox='0 0 16 16' >"+
-            "<path d='M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z' />"+
-            "</svg>"+
+            "<button class='btn btn-outline-primary' onclick='moreCant(" +
+            cursor.value.id +
+            "," +
+            cursor.value.cantidad +
+            "," +
+            cursor.value.coste +
+            ")'>" +
+            "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-arrow-right' viewBox='0 0 16 16' >" +
+            "<path d='M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z' />" +
+            "</svg>" +
             "</button>" +
-
             "<button class='btn btn-danger' onclick='eliminar(" +
             cursor.value.id +
             ")'>" +
@@ -142,7 +182,6 @@ function ListaCarrito() {
           contenido += "</tr>";
 
           costeTotal += cursor.value.cantidad * cursor.value.coste;
-          contador++;
 
           cursor.continue();
 
