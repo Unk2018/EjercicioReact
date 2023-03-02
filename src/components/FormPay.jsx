@@ -115,7 +115,7 @@ function FormPay({ db }) {
 
   const stripePromise = loadStripe(
     // Tu llave pública
-  );
+ );
 
   return (
     <Elements stripe={stripePromise}>

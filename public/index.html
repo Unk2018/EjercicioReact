@@ -40,4 +40,324 @@
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
   </body>
+
+  <script>
+    var db = null;
+    var openRequest = null;
+
+    function iniciarBD(db) {
+      let store;
+
+      try {
+        openRequest.onupgradeneeded = (e) => {
+          // se dispara si el cliente no tiene la base de datos
+          db = openRequest.result;
+
+          switch (
+            e.oldVersion // versión de db existente
+          ) {
+            case 0:
+              // version 0 significa que el cliente no tiene base de datos
+              // ejecutar inicialización
+              db = openRequest.result;
+              if (!db.objectStoreNames.contains("carrito")) {
+                // si no hay un almacén de usuarios
+
+                store = db.createObjectStore("carrito", {
+                  keyPath: "id",
+                  autoIncrement: true,
+                });
+                store.createIndex("image", "image", {
+                  unique: false,
+                });
+                store.createIndex("nombre", "nombre", {
+                  unique: false,
+                });
+                store.createIndex("cantidad", "cantidad", {
+                  unique: false,
+                });
+                store.createIndex("coste", "coste", {
+                  unique: false,
+                });
+
+                console.info("creamos carrito!");
+              } else {
+                console.info("tenemos carrito!");
+              }
+              break;
+
+            // En el caso de una tabla que ya existe
+            case 1:
+              // el cliente tiene la versión 1
+              // actualizar
+              //let deleteRequest = indexedDB.deleteDatabase(name)
+              //db.deleteObjectStore('usuarios')
+              break;
+
+            default:
+              console.info("Acción default iniciarBD");
+              break;
+          }
+        };
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    // Lo hace antes de montarlo
+    if (openRequest == null) {
+      openRequest = window.indexedDB.open("idbdwec", 1);
+
+      iniciarBD(db);
+
+      // Cuando se crea la base de datos te dice si lo ha conseguido o no
+      openRequest.onerror = (e) => {
+        console.error("Error", e);
+      };
+
+      openRequest.onsuccess = (e) => {
+        // Crea tabla si no existe
+        try {
+          db = e.target.result;
+        } catch (error) {
+          console.log(error);
+        }
+
+        // continúa trabajando con la base de datos usando el objeto db
+        console.info("tenemos bd!");
+      };
+    }
+
+    function consultarDB() {
+      // Abre usuarios y guarda sus datos
+      var listado = document.getElementById("listaCarrito");
+      var objectStore = db.transaction("carrito").objectStore("carrito");
+      var cursor;
+      var contenido = "";
+      var costeTotal = 0;
+      var contador = 1;
+
+      try {
+        // Abre los datos obtenidos. Cuando lo hace correctamente, recorrerá los datos
+        objectStore.openCursor().onsuccess = function (event) {
+          cursor = event.target.result;
+
+          // Si hay datos, entonces añade
+          if (cursor) {
+            contenido += "<tr>";
+
+            contenido += "<th scope='row'>" + contador + "</th>";
+            contenido += "<td>" + cursor.value.nombre + "</td>";
+            contenido += "<td>" + cursor.value.cantidad + "</td>";
+            contenido += "<td>" + cursor.value.coste + " €</td>";
+            contenido +=
+              "<td>" +
+              "<button class='btn btn-outline-primary' onclick='lessCant(" +
+              cursor.value.id +
+              "," +
+              cursor.value.cantidad +
+              "," +
+              cursor.value.coste +
+              ")'>" +
+              "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-arrow-left' viewBox='0 0 16 16' >" +
+              "<path d='M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z' />" +
+              "</svg>" +
+              "</button>" +
+              "<button class='btn btn-outline-primary' onclick='moreCant(" +
+              cursor.value.id +
+              "," +
+              cursor.value.cantidad +
+              "," +
+              cursor.value.coste +
+              ")'>" +
+              "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-arrow-right' viewBox='0 0 16 16' >" +
+              "<path d='M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z' />" +
+              "</svg>" +
+              "</button>" +
+              "<button class='btn btn-danger' onclick='eliminar(" +
+              cursor.value.id +
+              ")'>" +
+              "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-trash-fill' viewBox='0 0 16 16'>" +
+              "<path d='M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z'/>" +
+              "</svg></button></td>";
+
+            contenido += "</tr>";
+
+            costeTotal += cursor.value.cantidad * cursor.value.coste;
+            contador++;
+
+            cursor.continue();
+
+            // Si ya no hay, entonces se sale y mete a la tabla todos los datos existentes
+          } else {
+            contenido += "<tr>";
+
+            contenido += "<th></th>";
+            contenido += "<td></td>";
+            contenido += "<td></td>";
+            contenido += "<th>Total:</th>";
+            contenido += "<th>" + costeTotal.toFixed(2) + " €</th>";
+            contenido += "</tr>";
+
+            listado.innerHTML = contenido;
+            console.log("¡No hay más registros disponibles!");
+          }
+        };
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    function eliminar(id) {
+      // Abre usuarios y guarda sus datos
+      var objectStore = db
+        .transaction("carrito", "readwrite")
+        .objectStore("carrito");
+      var request = null;
+
+      try {
+        request = objectStore.delete(id);
+
+        request.onsuccess = () => {
+          console.log("Se ha eliminado producto");
+          consultarDB();
+        };
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    function moreCant(id, cantidad, coste) {
+      // Abre usuarios y guarda sus datos
+      var objectStore = db
+        .transaction("carrito", "readwrite")
+        .objectStore("carrito");
+      var request = null;
+      var cursor = null;
+
+      try {
+        // Abre los datos obtenidos. Cuando lo hace correctamente, recorrerá los datos
+        objectStore.openCursor().onsuccess = function (event) {
+          cursor = event.target.result;
+
+          // Si hay datos, entonces añade
+          if (cursor) {
+            if (cursor.value.id == id) {
+              // Coge el objeto de la id indicada
+              request = objectStore.get(id);
+
+              request.onerror = (event) => {
+                // Handle errors!
+                console.info("Se ha producido un error!");
+              };
+
+              // En el caso de que consigue los datos de la id indicada
+              request.onsuccess = (event) => {
+                // Coge los antiguos valores del dato correspondiente
+                data = request.result;
+
+                // Define los nuevos valores del dato seleccionado
+                data.image = cursor.value.imagen;
+                data.nombre = cursor.value.nombre;
+                data.cantidad = parseInt(cursor.value.cantidad) + 1;
+                data.coste = cursor.value.coste;
+
+                // Actualiza los datos por unos nuevos
+                requestUpdate = objectStore.put(data);
+
+                requestUpdate.onerror = () => {
+                  // Hubo un error a la hora de actualizar los datos
+                  console.info("no se puede modificar");
+                };
+
+                requestUpdate.onsuccess = (event) => {
+                  // Cuando se ha actualizado correctamente
+                  console.info("modificado!");
+                  consultarDB();
+                };
+              };
+            } else {
+              cursor.continue();
+            }
+          }
+        };
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    function lessCant(id, cantidad, coste) {
+      // Abre usuarios y guarda sus datos
+      var objectStore = db
+        .transaction("carrito", "readwrite")
+        .objectStore("carrito");
+      var request = null;
+      var cursor;
+
+      try {
+        cantidad -= 1;
+
+        if (cantidad == 0) {
+          request = objectStore.delete(id);
+
+          // En el caso de que funciona
+          request.onsuccess = () => {
+            // Eliminado correctamente
+            console.info("Eliminado");
+
+            // Listado actual
+            consultarDB();
+          };
+        } else {
+          // Abre los datos obtenidos. Cuando lo hace correctamente, recorrerá los datos
+          objectStore.openCursor().onsuccess = function (event) {
+            cursor = event.target.result;
+
+            // Si hay datos, entonces añade
+            if (cursor) {
+              if (cursor.value.id == id) {
+                // Coge el objeto de la id indicada
+                request = objectStore.get(id);
+
+                request.onerror = (event) => {
+                  // Handle errors!
+                  console.info("Se ha producido un error!");
+                };
+
+                // En el caso de que consigue los datos de la id indicada
+                request.onsuccess = (event) => {
+                  // Coge los antiguos valores del dato correspondiente
+                  data = request.result;
+
+                  // Define los nuevos valores del dato seleccionado
+                  data.image = cursor.value.imagen;
+                  data.nombre = cursor.value.nombre;
+                  data.cantidad = parseInt(cursor.value.cantidad) - 1;
+                  data.coste = cursor.value.coste;
+
+                  // Actualiza los datos por unos nuevos
+                  requestUpdate = objectStore.put(data);
+
+                  requestUpdate.onerror = () => {
+                    // Hubo un error a la hora de actualizar los datos
+                    console.info("no se puede modificar");
+                  };
+
+                  requestUpdate.onsuccess = (event) => {
+                    // Cuando se ha actualizado correctamente
+                    console.info("modificado!");
+                    consultarDB();
+                  };
+                };
+              } else {
+                cursor.continue();
+              }
+            }
+          };
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  </script>
 </html>
