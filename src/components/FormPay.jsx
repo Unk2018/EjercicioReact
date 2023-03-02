@@ -9,7 +9,6 @@ import {
 } from "@stripe/react-stripe-js";
 
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 
 function FormPay({ db }) {
   const navigate = useNavigate();
@@ -135,8 +134,6 @@ function FormPay({ db }) {
         button.disabled = true;
         btn = true;
       }
-
-      console.log(btn);
     };
 
     return (
@@ -205,7 +202,7 @@ function FormPay({ db }) {
   };
 
   const stripePromise = loadStripe(
-    // Tu llave pública
+    // Tu llave pública de Stripe
   );
 
   return (
