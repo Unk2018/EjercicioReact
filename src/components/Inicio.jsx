@@ -137,7 +137,7 @@ function Inicio() {
           <div className="col-12 col-sm-7 col-md-7 col-lg-7 text-center mt-4">
             <h4>¡Mira nuestro catálogo de productos!</h4>
             <p>
-              Creado por Alex, esta tienda online actúa como si fuera un
+              La tienda online actúa como si fuera un
               catálogo de un supermercado. Te trae los productos de la tienda
               hasta tu vecindario.
             </p>
